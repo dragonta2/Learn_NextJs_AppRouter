@@ -1,0 +1,5 @@
+# .prettierignore｜prettierの無視設定ファイル
+
+node_modules
+dist
+.next

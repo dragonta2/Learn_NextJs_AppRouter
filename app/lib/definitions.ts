@@ -1,3 +1,10 @@
+// app/lib/definitions.ts｜一括型定義ファイル
+// このファイルは、データの型定義を提供するためのものです。
+// データの形状を定義し、各プロパティが受け入れるデータ型を指定します。
+// 教育目的のため、手動でこれらの型を定義しています。
+// ただし、ORM（オブジェクトリレーションマップ）のようなものを使用している場合、
+// これらの型は自動的に生成されます。
+
 // This file contains type definitions for your data.
 // It describes the shape of the data, and what data type each property should accept.
 // For simplicity of teaching, we're manually defining these types.
@@ -26,7 +33,7 @@ export type Invoice = {
   status: 'pending' | 'paid';
 };
 
-export type Revenue = {
+export type Revenues = {
   month: string;
   revenue: number;
 };

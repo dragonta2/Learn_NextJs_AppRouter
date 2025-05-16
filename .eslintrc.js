@@ -1,17 +1,21 @@
+// .eslintrc.js｜ESLint 設定ファイル
+
 module.exports = {
-  "extends": "airbnb",
-  "parserOptions": {
-  "ecmaFeatures": {
-      "jsx": true
-    }
+  parserOptions: {
+    ecmaFeatures: {
+      jsx: true,
+    },
   },
-  "plugins": ["react"],
-  "extends": ["plugin:react/recommended"],
-  [
+  plugins: ['react'],
+  extends: [
     'eslint:recommended',
     'plugin:react/recommended',
     'plugin:react-hooks/recommended',
     'plugin:jsx-a11y/recommended',
-    'next/core-web-vitals'
-  ]
+    'next/core-web-vitals',
+    'prettier', // ← 競合しないように最後に入れるのが一般的
+  ],
+  rules: {
+    // ここに独自ルールを追加できる
+  },
 };

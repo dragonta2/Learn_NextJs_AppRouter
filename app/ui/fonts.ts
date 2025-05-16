@@ -6,7 +6,7 @@ export const inter = Inter({ subsets: ['latin'] });
 
 export const lusitana = Lusitana({
   weight: ['400', '700'],
-  subsets: ['latin']
+  subsets: ['latin'],
 });
 // このファイルは、Googleフォントの「Inter」と「Lusitana」をNext.jsプロジェクトで使用するために設定しています。
 // `Inter`と`Lusitana`は、Google Fontsからインポートされ、特定のサブセット（ここではラテン文字）を指定して使用されています。

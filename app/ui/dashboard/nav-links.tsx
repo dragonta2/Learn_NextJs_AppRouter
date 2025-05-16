@@ -2,7 +2,6 @@
 
 'use client';
 
-
 import Link from 'next/link';
 
 import {
@@ -27,7 +26,6 @@ const links = [
 ];
 
 export default function NavLinks() {
-
   const pathname = usePathname();
 
   return (

@@ -1,3 +1,5 @@
+// app/lib/data.ts
+
 import postgres from 'postgres';
 import {
   CustomerField,
@@ -5,13 +7,22 @@ import {
   InvoiceForm,
   InvoicesTable,
   LatestInvoiceRaw,
-  Revenue,
+  Revenues,
 } from './definitions';
 import { formatCurrency } from './utils';
 
 const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
+// `sql`変数は、PostgreSQLデータベースとの接続を管理し、SQLクエリを実行するためのインターフェースを提供します。
+// `postgres`関数を使用して、環境変数`POSTGRES_URL`で指定されたデータベースに接続します。
+// この変数を通じて、データベースに対してクエリを発行し、結果を取得することができます。
+// `sql`変数は、型パラメータを指定することで、クエリの結果の型を明示的に定義することも可能です。
+// `postgres`関数自体の定義は、`postgres`パッケージ内で行われています。
+// このパッケージは、Node.jsアプリケーションからPostgreSQLデータベースに接続し、
+// SQLクエリを実行するためのライブラリです。
 
-export async function fetchRevenue() {
+
+
+export async function fetchRevenues() {
   try {
     // Artificially delay a response for demo purposes.
     // Don't do this in production :)
@@ -19,7 +30,10 @@ export async function fetchRevenue() {
     // console.log('Fetching revenue data...');
     // await new Promise((resolve) => setTimeout(resolve, 3000));
 
-    const data = await sql<Revenue[]>`SELECT * FROM revenue`;
+    const data = await sql<Revenues[]>`SELECT * FROM revenues`;
+
+    // 確認用
+    console.log('revenuesテーブルのデータ', data);
 
     // console.log('Data fetch completed after 3 seconds.');
 
@@ -58,9 +72,9 @@ export async function fetchCardData() {
     const invoiceCountPromise = sql`SELECT COUNT(*) FROM invoices`;
     const customerCountPromise = sql`SELECT COUNT(*) FROM customers`;
     const invoiceStatusPromise = sql`SELECT
-         SUM(CASE WHEN status = 'paid' THEN amount ELSE 0 END) AS "paid",
-         SUM(CASE WHEN status = 'pending' THEN amount ELSE 0 END) AS "pending"
-         FROM invoices`;
+        SUM(CASE WHEN status = 'paid' THEN amount ELSE 0 END) AS "paid",
+        SUM(CASE WHEN status = 'pending' THEN amount ELSE 0 END) AS "pending"
+        FROM invoices`;
 
     const data = await Promise.all([
       invoiceCountPromise,
@@ -88,7 +102,7 @@ export async function fetchCardData() {
 const ITEMS_PER_PAGE = 6;
 export async function fetchFilteredInvoices(
   query: string,
-  currentPage: number,
+  currentPage: number
 ) {
   const offset = (currentPage - 1) * ITEMS_PER_PAGE;
 
@@ -187,22 +201,22 @@ export async function fetchCustomers() {
 export async function fetchFilteredCustomers(query: string) {
   try {
     const data = await sql<CustomersTableType[]>`
-		SELECT
-		  customers.id,
-		  customers.name,
-		  customers.email,
-		  customers.image_url,
-		  COUNT(invoices.id) AS total_invoices,
-		  SUM(CASE WHEN invoices.status = 'pending' THEN invoices.amount ELSE 0 END) AS total_pending,
-		  SUM(CASE WHEN invoices.status = 'paid' THEN invoices.amount ELSE 0 END) AS total_paid
-		FROM customers
-		LEFT JOIN invoices ON customers.id = invoices.customer_id
-		WHERE
-		  customers.name ILIKE ${`%${query}%`} OR
+      SELECT
+      customers.id,
+      customers.name,
+      customers.email,
+      customers.image_url,
+      COUNT(invoices.id) AS total_invoices,
+      SUM(CASE WHEN invoices.status = 'pending' THEN invoices.amount ELSE 0 END) AS total_pending,
+      SUM(CASE WHEN invoices.status = 'paid' THEN invoices.amount ELSE 0 END) AS total_paid
+      FROM customers
+      LEFT JOIN invoices ON customers.id = invoices.customer_id
+      WHERE
+      customers.name ILIKE ${`%${query}%`} OR
         customers.email ILIKE ${`%${query}%`}
-		GROUP BY customers.id, customers.name, customers.email, customers.image_url
-		ORDER BY customers.name ASC
-	  `;
+      GROUP BY customers.id, customers.name, customers.email, customers.image_url
+      ORDER BY customers.name ASC
+    `;
 
     const customers = data.map((customer) => ({
       ...customer,
@@ -216,3 +230,46 @@ export async function fetchFilteredCustomers(query: string) {
     throw new Error('Failed to fetch customer table.');
   }
 }
+
+// このファイルは、データベースから情報を取得するための関数が集められたものです。
+// 具体的には、顧客情報や請求書情報をデータベースから取り出して、
+// それを使いやすい形に整えて返す役割を持っています。
+
+// 例えば、`fetchCustomers`関数は、すべての顧客の名前とIDを取得し、
+// 名前順に並べて返します。
+
+// また、`fetchFilteredCustomers`関数は、特定の条件に合う顧客を探し出し、
+// その顧客が持つ請求書の情報も一緒にまとめて返します。
+// これにより、アプリケーションの他の部分で、
+// 必要な顧客情報を簡単に利用できるようになります。
+
+// ■ fetchRevenue関数
+// `fetchRevenue`関数は、データベースから収益データを取得するための非同期関数です。
+// この関数の処理の流れを詳しく説明します。
+
+// 1. **関数の宣言**: `fetchRevenue`は`async`キーワードを使って宣言されており、
+//    非同期処理を行うことができる関数です。これにより、`await`キーワードを使用して
+//    非同期操作の完了を待つことができます。
+
+// 2. **tryブロックの開始**: 関数の中で、データベース操作を行う部分は`try`ブロック内に
+//    記述されています。これにより、データベース操作中にエラーが発生した場合に
+//    `catch`ブロックでエラーを処理することができます。
+
+// 3. **データベースクエリの実行**: `sql<Revenue[]>`という構文を使って、
+//    データベースから収益データを取得するクエリを実行します。
+//    `SELECT * FROM revenue`というSQL文を使用して、`revenue`テーブルから
+//    すべてのデータを取得します。このクエリは、`Revenue`型の配列として
+//    結果を返します。
+
+// 4. **データの返却**: クエリの結果として取得したデータをそのまま返します。
+//    これにより、関数を呼び出した側でこのデータを利用することができます。
+
+// 5. **catchブロックの開始**: `try`ブロック内でエラーが発生した場合、
+//    `catch`ブロックが実行されます。ここでは、エラーメッセージをコンソールに
+//    出力し、`new Error('Failed to fetch revenue data.')`をスローします。
+//    これにより、関数を呼び出した側でエラーをキャッチして適切に処理することが
+//    できます。
+
+// 以上が`fetchRevenue`関数の処理の流れです。この関数は、データベースから
+// 収益データを取得し、エラーが発生した場合には適切にエラーハンドリングを行う
+// 構造になっています。
