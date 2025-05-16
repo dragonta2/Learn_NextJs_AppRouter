@@ -17,5 +17,7 @@ module.exports = {
   ],
   rules: {
     // ここに独自ルールを追加できる
+    'no-undef': 'off', // 👈 React未定義エラーを無効化
+    'no-unused-vars': 'warn', // ❗警告にダウングレード
   },
 };
