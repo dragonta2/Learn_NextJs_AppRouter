@@ -6,5 +6,12 @@ module.exports = {
     }
   },
   "plugins": ["react"],
-  "extends": ["plugin:react/recommended"]
+  "extends": ["plugin:react/recommended"],
+  [
+    'eslint:recommended',
+    'plugin:react/recommended',
+    'plugin:react-hooks/recommended',
+    'plugin:jsx-a11y/recommended',
+    'next/core-web-vitals'
+  ]
 };
