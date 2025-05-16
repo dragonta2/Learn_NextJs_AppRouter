@@ -13,6 +13,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   );
 }
 
+
 // このファイルは、Next.jsのダッシュボードレイアウトを定義しています。
 // `Layout`コンポーネントは、サイドナビゲーションとメインコンテンツエリアを持つレイアウトを提供します。
 // サイドナビゲーションは`SideNav`コンポーネントを使用しており、メインコンテンツは`children`プロパティを通じて受け取ります。
