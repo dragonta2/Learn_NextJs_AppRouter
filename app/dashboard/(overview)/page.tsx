@@ -4,27 +4,13 @@ import { Card } from '@/app/ui/dashboard/cards';
 import RevenueChart from '@/app/ui/dashboard/revenue-chart';
 import LatestInvoices from '@/app/ui/dashboard/latest-invoices';
 import { lusitana } from '@/app/ui/fonts';
+import { Suspense } from 'react';
+import CardWrapper from '@/app/ui/dashboard/cards';
+import { RevenueChartSkeleton, LatestInvoicesSkeleton, CardsSkeleton } from '@/app/ui/skeletons';
 
-// データ取得非同期関数たち
-import {
-  fetchRevenues,
-  fetchLatestInvoices,
-  fetchCardData,
-} from '@/app/lib/data';
+// データ取得非同期関数(fetchHoge）たちは、それぞれのコンポーネントへ移動
 
 export default async function Page() {
-
-  // PostgreSQLからrevenueテーブルのデータを取得
-  const revenues = await fetchRevenues();
-
-  const latestInvoices = await fetchLatestInvoices();
-
-  const {
-    numberOfInvoices,
-    numberOfCustomers,
-    totalPaidInvoices,
-    totalPendingInvoices,
-  } = await fetchCardData();
 
   return (
     <main>
@@ -32,20 +18,21 @@ export default async function Page() {
         Dashboard
       </h1>
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-        <Card title="Collected" value={totalPaidInvoices} type="collected" />
-        <Card title="Pending" value={totalPendingInvoices} type="pending" />
-        <Card title="Total Invoices" value={numberOfInvoices} type="invoices" />
-        <Card
-          title="Total Customers"
-          value={numberOfCustomers}
-          type="customers"
-        />
+        <Suspense fallback={<CardsSkeleton />}>
+          <CardWrapper />
+        </Suspense>
       </div>
       <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-4 lg:grid-cols-8">
-        {/* 収益チャート */}
-        {/* revenueプロップスには、PostgreSQLから取得したrevenuesテーブルのデータが渡される */}
-        <RevenueChart revenues={revenues} />
-        <LatestInvoices latestInvoices={latestInvoices} />
+        <Suspense fallback={<RevenueChartSkeleton />}>
+          {/* 収益チャート */}
+          {/* revenueプロップスには、PostgreSQLから取得したrevenuesテーブルのデータが渡される */}
+          {/* 旧コード｜<RevenueChart revenues={revenues} /> */}
+          <RevenueChart />
+        </Suspense>
+
+        <Suspense fallback={<LatestInvoicesSkeleton />}>
+          <LatestInvoices />
+        </Suspense>
       </div>
     </main>
   );
@@ -84,3 +71,11 @@ export default async function Page() {
 // Y軸には収益の目盛りが表示され、X軸には各月の名前が表示されます。
 // データがない場合は、「データがありません」というメッセージが表示されます。
 // `revenue`はこのコンポーネントに渡されるpropsで、収益データを含む配列です。
+
+
+// `Suspense`コンポーネントは、Reactの非同期レンダリング機能を活用して、
+// コンポーネントがデータを取得している間にフォールバックUIを表示するために使用されます。
+// `fallback`プロパティには、データがまだロードされていないときに表示するUIを指定します。
+// ここでは、`<RevenueChartSkeleton />`がフォールバックUIとして指定されており、
+// これは収益チャートがロードされるまでの間、ユーザーにスケルトンローディングアニメーションを表示します。
+

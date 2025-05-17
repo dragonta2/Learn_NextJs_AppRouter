@@ -27,15 +27,17 @@ export async function fetchRevenues() {
     // Artificially delay a response for demo purposes.
     // Don't do this in production :)
 
-    // console.log('Fetching revenue data...');
-    // await new Promise((resolve) => setTimeout(resolve, 3000));
+    console.log('Fetching revenues data...');
+
+    // 遅延させる状況を作り出すために、3秒待ってからデータを取得する
+    await new Promise((resolve) => setTimeout(resolve, 3000));
 
     const data = await sql<Revenues[]>`SELECT * FROM revenues`;
 
     // 確認用
     console.log('revenuesテーブルのデータ', data);
 
-    // console.log('Data fetch completed after 3 seconds.');
+    console.log('Data fetch completed after 3 seconds.');
 
     return data;
   } catch (error) {

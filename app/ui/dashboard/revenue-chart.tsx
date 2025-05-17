@@ -4,6 +4,7 @@ import { generateYAxis } from '@/app/lib/utils';
 import { CalendarIcon } from '@heroicons/react/24/outline';
 import { lusitana } from '@/app/ui/fonts';
 import { Revenues } from '@/app/lib/definitions';
+import { fetchRevenues } from '@/app/lib/data';
 
 // This component is representational only.
 // For data visualization UI, check out:
@@ -11,13 +12,18 @@ import { Revenues } from '@/app/lib/definitions';
 // https://www.chartjs.org/
 // https://airbnb.io/visx/
 
-export default async function RevenueChart({
+// export default async function RevenueChart({
 
-  // 親から渡されるrevenuesプロップスには、PostgreSQLから取得したrevenueテーブルのデータが渡される
-  revenues,
-}: {
-  revenues: Revenues[];
-}) {
+//   // 親から渡されるrevenuesプロップスには、PostgreSQLから取得したrevenueテーブルのデータが渡される
+//   revenues,
+// }: {
+//   revenues: Revenues[];
+// }) {
+
+export default async function RevenueChart() {
+
+  const revenues: Revenues[] = await fetchRevenues(); // Fetch data inside the component
+
   const chartHeight = 350;
   // NOTE: Uncomment this code in Chapter 7
 
