@@ -2,6 +2,9 @@
 
 import SideNav from '@/app/ui/dashboard/sidenav';
 
+// 部分的事前レンダリングを有効化
+export const experimental_ppr = true;
+
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex h-screen flex-col md:flex-row md:overflow-hidden">

@@ -7,7 +7,9 @@ const nextConfig: NextConfig = {
   eslint: {
     ignoreDuringBuilds: true, // 💥 Vercelビルド時にESLintエラーで落ちなくなる！
   },
-
+  experimental: {
+    ppr: 'incremental', // 部分的事前レンダリングを有効化
+  }
   // 他に追加したいオプションはここに書け
 };
 
